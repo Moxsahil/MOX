@@ -8,6 +8,11 @@ import CaptainSignUp from './pages/CaptainSignUp'
 import CaptainSignup2 from './pages/CaptainSignup2'
 import Home from './pages/home'
 import UserProtectWrapper from './pages/UserProtectWrapper'
+import UserLogout from './pages/UserLogout'
+import Vehicle from './pages/Vehicle'
+import VehicleScreen from './pages/VehicleScreen'
+import Paymentpage from './pages/Paymentpage'
+import RideDetails from './pages/RideDetails'
 
 
 const App = () => {
@@ -25,6 +30,15 @@ const App = () => {
             <Home/>
           </UserProtectWrapper>
         }/>
+        <Route path='/user/logout' element={
+          <UserProtectWrapper>
+            <UserLogout />
+          </UserProtectWrapper>
+        }/>
+        <Route path='/vehicle' element={<UserProtectWrapper><Vehicle /></UserProtectWrapper>}/>
+        <Route path='/choosevehicle' element={<UserProtectWrapper><VehicleScreen /></UserProtectWrapper>}/>
+        <Route path='/ridedetails' element={<UserProtectWrapper><RideDetails /></UserProtectWrapper>}/>
+        <Route path='/paymentpage' element={<UserProtectWrapper><Paymentpage /></UserProtectWrapper>}/>
       </Routes>
     </div>
   )

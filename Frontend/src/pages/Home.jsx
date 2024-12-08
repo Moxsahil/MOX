@@ -1,39 +1,134 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useRef, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import gsap from "gsap";
+import 'remixicon/fonts/remixicon.css';
+import LocationSearchPanel from "./LocationSearchPanel";
 
 const Home = () => {
+  const [pickup, setPickup] = useState("");
+  const [destination, setDestination] = useState("");
+  const [panelOpen, setPanelOpen] = useState(false);
+
+  const panelRef = useRef(null);
+  const formRef = useRef(null);
+  const panelCloseRef = useRef(null);
+  const navigate = useNavigate(); // Initialize useNavigate
+
+  const handleLocationSelect = (location) => {
+    if (pickup === "") {
+      setPickup(location);
+    } else {
+      setDestination(location);
+    }
+    setPanelOpen(false);
+  };
+
+  useEffect(() => {
+    if (panelOpen) {
+      gsap.to(panelRef.current, {
+        height: "61%",
+        duration: 0.5,
+        ease: "power2.out",
+      });
+      gsap.to(formRef.current, {
+        y: "-180%",
+        ease: "power2.out",
+      });
+      gsap.to(panelCloseRef.current, {
+        opacity: 1,
+      });
+      gsap.to('.label-to-top', { opacity: 1, duration: 0.3 });
+    } else {
+      gsap.to(panelRef.current, {
+        height: "0%",
+        duration: 0.5,
+        ease: "power2.out",
+      });
+      gsap.to(formRef.current, {
+        y: "0%",
+        duration: 0.5,
+        ease: "power2.out",
+      });
+      gsap.to(panelCloseRef.current, {
+        opacity: 0,
+      });
+      gsap.to('.label-to-top', { opacity: 0, duration: 0.3 });
+    }
+  }, [panelOpen]);
+
+  const handleButtonClick = () => {
+    if (pickup && destination) {
+      navigate("/vehicle"); // Navigate to the new route
+    } else {
+      alert("Please fill in both Pickup and Destination fields.");
+    }
+  };
+
   return (
-    <div className="bg-gradient-to-b from-pink-300 to-pink-100 w-full h-screen flex flex-col justify-between">
-      {/* Main Section with Full Image */}
-      <main className="flex-1 relative">
-        {/* Image covering full screen */}
-        <div className="w-full h-full">
-          <img
-            src="background.jpg" // Replace with your traffic light image path
-            alt="Traffic light"
-            className="w-full h-full object-cover"
-          />
+    <div className="flex flex-col items-center w-full h-screen bg-gray-100 relative overflow-hidden">
+      <div className="w-full h-2/3 bg-gray-300 relative">
+        <h1 className="absolute top-5 right-5 text-2xl font-bold text-black">MOX</h1>
+        <div className="absolute inset-0">
+          <iframe
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d27888.810772897955!2d76.5710154!3d28.8955165!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390d83bfbffffffff%3A0xfdf11cda0895e60d!2sRohtak%2C%20Haryana!5e0!3m2!1sen!2sin!4v1699379253679!5m2!1sen!2sin"
+            className="w-full h-full"
+            allowFullScreen=""
+            loading="lazy"
+            title="Map"
+          ></iframe>
         </div>
+      </div>
 
-        {/* MOX Logo Overlay */}
-        <div className="absolute top-8 left-0">
-          <img
-            src="MOX.png" // Path to your MOX logo image
-            alt="MOX Logo"
-            className="w-44 h-auto"
-          />
+      <div
+        ref={formRef}
+        className="w-full h-1/3 bg-white flex flex-col items-center px-4 relative transition-all duration-500 ease-in-out"
+      >
+        <h5 ref={panelCloseRef} onClick={() => setPanelOpen(false)}
+          className="absolute top-5 right-5 text-2xl font-bold">
+          <i className="ri-arrow-down-wide-fill"></i>
+        </h5>
+        <h2 className="text-lg font-semibold my-4">Find a trip</h2>
+        
+        <div className="w-full max-w-md">
+          <div className="mb-4">
+            <form className="block text-gray-600 text-sm mb-2 label-to-top">Pick-up Location</form> 
+            <input
+              onClick={() => setPanelOpen(true)}
+              value={pickup}
+              onChange={(e) => setPickup(e.target.value)}
+              type="text"
+              placeholder="Add a pick-up location"
+              className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring focus:ring-blue-300"
+            />
+          </div>
+          <div className="mb-4">
+            <form className="block text-gray-600 text-sm mb-2 label-to-top">Destination</form> 
+            <input
+              onClick={() => setPanelOpen(true)}
+              value={destination}
+              onChange={(e) => setDestination(e.target.value)}
+              type="text"
+              placeholder="Enter your destination"
+              className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring focus:ring-blue-300"
+            />
+          </div>
+          <button 
+            onClick={handleButtonClick}
+            className="w-full bg-black text-white py-2 rounded-md hover:bg-gray-800 transition"
+          >
+            Choose pick-up time
+          </button>
         </div>
-      </main>
+      </div>
 
-      {/* Footer */}
-      <footer className="bg-white px-6 py-8 rounded-t-3xl shadow-lg">
-        <h2 className="text-gray-900 text-xl font-semibold mb-4">
-          Get started with MOX
-        </h2>
-        <Link to="/login" className="bg-black text-white w-full py-4 rounded-lg text-lg font-medium flex items-center justify-center hover:bg-gray-800 transition">
-          Continue <span className="ml-2 text-xl">→</span>
-        </Link>
-      </footer>
+      <div
+        ref={panelRef}
+        className="panel bg-white w-full absolute bottom-0 left-0"
+        style={{ height: "0%", overflow: "hidden" }}
+      >
+        <LocationSearchPanel onLocationSelect={handleLocationSelect} />
+        <p className="text-white text-center mt-4"></p>
+      </div>
     </div>
   );
 };
