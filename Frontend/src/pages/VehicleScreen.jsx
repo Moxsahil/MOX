@@ -3,7 +3,12 @@ import { useNavigate } from 'react-router-dom';
 
 const VehicleScreen = () => {
   const navigate = useNavigate();
-  const [selectedRide, setSelectedRide] = useState(null); // State to track selected ride
+
+  const handleLogout = async () => {
+    navigate("/user/logout");
+  };
+
+  const [selectedRide, setSelectedRide] = useState(null); 
 
   const rides = [
     {
@@ -53,6 +58,21 @@ const VehicleScreen = () => {
     <div className="h-screen flex flex-col">
       {/* Map Section */}
       <div className="flex-grow relative">
+      <h1 className="absolute top-16 right-5 text-2xl font-bold text-black z-50">MOKSH</h1>
+
+      <div className="absolute top-5 right-5 flex items-center z-50">
+  <button
+    onClick={handleLogout}
+    className="flex items-center bg-red-500 text-white px-3 py-2 rounded-md hover:bg-red-600 transition"
+  >
+    <img
+      src="https://www.svgrepo.com/show/529288/user-minus.svg" 
+      alt="Logout Icon"
+      className="w-6 h-6 mr-2" 
+    />
+    Logout
+  </button>
+</div>
         <div className="absolute inset-0 bg-gray-200">
           <iframe
             src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d27888.810772897955!2d76.5710154!3d28.8955165!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390d83bfbffffffff%3A0xfdf11cda0895e60d!2sRohtak%2C%20Haryana!5e0!3m2!1sen!2sin!4v1699379253679!5m2!1sen!2sin"

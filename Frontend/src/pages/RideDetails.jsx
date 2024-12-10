@@ -1,8 +1,14 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 
 const RideDetails = () => {
   const [message, setMessage] = useState("");
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    navigate("/user/logout");
+  };
 
   const handleSend = () => {
     if (message.trim()) {
@@ -15,6 +21,22 @@ const RideDetails = () => {
 
   return (
     <div className="min-h-screen bg-gray-100 overflow-hidden">
+      <h1 className="absolute top-16 right-5 text-2xl font-bold text-black z-50">MOKSH</h1>
+
+<div className="absolute top-5 right-5 flex items-center z-50">
+  <button
+    onClick={handleLogout}
+    className="flex items-center bg-red-500 text-white px-3 py-2 rounded-md hover:bg-red-600 transition"
+  >
+    <img
+      src="https://www.svgrepo.com/show/529288/user-minus.svg" 
+      alt="Logout Icon"
+      className="w-6 h-6 mr-2" 
+    />
+    Logout
+  </button>
+</div>
+
       {/* Map Section */}
       <div className="relative h-[40vh]">
         <iframe

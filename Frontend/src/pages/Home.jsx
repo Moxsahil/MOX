@@ -8,11 +8,16 @@ const Home = () => {
   const [pickup, setPickup] = useState("");
   const [destination, setDestination] = useState("");
   const [panelOpen, setPanelOpen] = useState(false);
+  const [currentLocation, setCurrentLocation] = useState("");
 
   const panelRef = useRef(null);
   const formRef = useRef(null);
   const panelCloseRef = useRef(null);
-  const navigate = useNavigate(); // Initialize useNavigate
+  const navigate = useNavigate(); 
+
+  const handleLogout = async () => {
+    navigate("/user/logout");
+  };
 
   const handleLocationSelect = (location) => {
     if (pickup === "") {
@@ -28,11 +33,11 @@ const Home = () => {
       gsap.to(panelRef.current, {
         height: "61%",
         duration: 0.5,
-        ease: "power2.out",
+        ease: "ease.out",
       });
       gsap.to(formRef.current, {
         y: "-180%",
-        ease: "power2.out",
+        ease: "ease.out",
       });
       gsap.to(panelCloseRef.current, {
         opacity: 1,
@@ -64,14 +69,58 @@ const Home = () => {
     }
   };
 
+  // Automatically detect current location
+  useEffect(() => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        async (position) => {
+          const { latitude, longitude } = position.coords;
+
+          // Fetch the nearby city using OpenStreetMap or Google Places API
+          try {
+            const response = await fetch(
+              `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`
+            );
+            const data = await response.json();
+            const city = data.address.city || data.address.town || data.address.village;
+            setCurrentLocation(city);
+            
+          } catch (error) {
+            console.error("Error fetching location:", error);
+          }
+        },
+        (error) => {
+          console.error("Error getting location:", error);
+        }
+      );
+    } else {
+      alert("Geolocation is not supported by this browser.");
+    }
+  }, []);
+
   return (
     <div className="flex flex-col items-center w-full h-screen bg-gray-100 relative overflow-hidden">
       <div className="w-full h-2/3 bg-gray-300 relative">
-        <h1 className="absolute top-5 right-5 text-2xl font-bold text-black">MOX</h1>
+        <h1 className="absolute top-16 right-5 text-2xl font-bold text-blue-500 z-50">MOKSH</h1>
+
+        <div className="absolute top-5 right-5 flex items-center z-50">
+  <button
+    onClick={handleLogout}
+    className="flex items-center bg-red-500 text-white px-3 py-2 rounded-md hover:bg-red-600 transition"
+  >
+    <img
+      src="https://www.svgrepo.com/show/529288/user-minus.svg" // Replace with your image path
+      alt="Logout Icon"
+      className="w-6 h-6 mr-2" // Adjust size and margin as needed
+    />
+    Logout
+  </button>
+</div>
+
         <div className="absolute inset-0">
           <iframe
             src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d27888.810772897955!2d76.5710154!3d28.8955165!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390d83bfbffffffff%3A0xfdf11cda0895e60d!2sRohtak%2C%20Haryana!5e0!3m2!1sen!2sin!4v1699379253679!5m2!1sen!2sin"
-            className="w-full h-full"
+            className="w-full h-full "
             allowFullScreen=""
             loading="lazy"
             title="Map"
